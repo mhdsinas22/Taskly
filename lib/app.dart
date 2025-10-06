@@ -9,6 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Material Side
     return MaterialApp(
       debugShowCheckedModeBanner:
           false, // Removes the debug banner on top-right corner
