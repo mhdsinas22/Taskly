@@ -1,0 +1,8 @@
+import 'package:flutter/cupertino.dart';
+
+class AppColors {
+  static const Color primaryColor = Color(0xFF1E6F9F); // Primary
+  static const Color surfaceColor = Color(0xFF1A1A1A); // Surface
+  static const Color onSurface = Color(0xFFFFFFFF); // On Surface
+  static const Color black = Color(0xFF000000); // Black
+}
