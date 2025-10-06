@@ -1,28 +1,29 @@
+// android/build.gradle.kts
 buildscript {
     repositories {
-        google()
+        google()       // ✅ required for Firebase
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.0") // your AGP version
-        classpath("com.google.gms:google-services:4.4.0") // ✅ add this
+        classpath("com.android.tools.build:gradle:8.1.0")   // Android Gradle Plugin
+        classpath("com.google.gms:google-services:4.4.0")    // Google services plugin
     }
 }
+
 allprojects {
     repositories {
-        google()
+        google()       // ✅ required for Firebase
         mavenCentral()
     }
 }
 
+// Optional: custom build dirs (your code)
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()
 rootProject.layout.buildDirectory.value(newBuildDir)
 
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
-}
-subprojects {
     project.evaluationDependsOn(":app")
 }
 
