@@ -9,6 +9,7 @@ class CircularTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      style: TextStyle(color: AppColors.onSurface),
       decoration: InputDecoration(
         border: InputBorder.none,
         hintStyle: TextStyle(color: AppColors.onSurface),
