@@ -41,6 +41,7 @@ class HomeScreen extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //bold text
                       BoldText(text: "Add", fontsize: screenWidth * 0.035),
                       SizedBox(width: screenWidth * 0.01),
                       Icon(Icons.add_circle_outline, size: screenWidth * 0.04),
