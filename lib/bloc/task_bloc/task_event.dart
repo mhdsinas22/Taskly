@@ -1,0 +1,23 @@
+import 'package:equatable/equatable.dart';
+
+abstract class TaskEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class LoadTask extends TaskEvent {}
+
+class AddTask extends TaskEvent {
+  final String text;
+  AddTask(this.text);
+  @override
+  List<Object?> get props => [text];
+}
+
+class UpdateTask extends TaskEvent {
+  final String id;
+  final bool isCompleted;
+  UpdateTask(this.id, this.isCompleted);
+  @override
+  List<Object?> get props => [id, isCompleted];
+}

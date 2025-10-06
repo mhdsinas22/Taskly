@@ -12,7 +12,7 @@ class CircularTextField extends StatelessWidget {
       style: TextStyle(color: AppColors.onSurface),
       decoration: InputDecoration(
         border: InputBorder.none,
-        hintStyle: TextStyle(color: AppColors.onSurface),
+        hintStyle: TextStyle(color: AppColors.lightGrey),
         fillColor: AppColors.darkGrey, // background color
         filled: true,
         hintText: hinttext,
