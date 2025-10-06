@@ -1,3 +1,4 @@
+import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:flutter/material.dart';
 
 class BoldText extends StatelessWidget {
@@ -10,7 +11,7 @@ class BoldText extends StatelessWidget {
     this.fontsize = 20,
     required this.text,
     this.textAlign = TextAlign.center,
-    this.color = Colors.black,
+    this.color = AppColors.onSurface,
   });
 
   @override
