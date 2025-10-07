@@ -1,6 +1,8 @@
 import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
 import 'package:borading_week2/core/widgets/texts/semibold.dart';
+import 'package:borading_week2/models/task.dart';
+import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
 import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
@@ -11,6 +13,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController taskcontrller = TextEditingController();
+    final TaskService taskService = TaskService();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -42,7 +46,17 @@ class HomeScreen extends StatelessWidget {
                       CircularButton(
                         width: screenWidth * 0.25,
                         height: screenHeight * 0.06,
-                        onPressed: () {},
+                        onPressed: () async {
+                          final task = taskcontrller.text.trim();
+                          if (task.isNotEmpty) {
+                            print("task$task");
+                            await taskService.addTask(task);
+                            taskcontrller.clear();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Task added!')),
+                            );
+                          }
+                        },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -107,6 +121,61 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                ),
+                Expanded(
+                  child: StreamBuilder<List<TaskModel>>(
+                    stream: taskService.tasksStream(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return Center(
+                          child: Text(
+                            "No tasks yet",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        );
+                      }
+
+                      final tasks = snapshot.data!;
+
+                      return ListView.builder(
+                        itemCount: tasks.length,
+                        itemBuilder: (context, index) {
+                          var todo = tasks[index];
+                          return ListTile(
+                            title: Text(
+                              todo.tasktext,
+                              style: TextStyle(
+                                color: Colors.white,
+                                decoration:
+                                    todo.iscomplted
+                                        ? TextDecoration.lineThrough
+                                        : null,
+                              ),
+                            ),
+                            trailing: Checkbox(
+                              value: todo.iscomplted,
+                              onChanged: (value) {
+                                taskService.updateTask(
+                                  todo.id,
+                                  value as String,
+                                );
+                              },
+                            ),
+                            onLongPress: () {
+                              taskService.deleteTask(todo.id);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                CircularTextField(
+                  hinttext: "Enter a task",
+                  controller: taskcontrller,
                 ),
               ],
             ),
