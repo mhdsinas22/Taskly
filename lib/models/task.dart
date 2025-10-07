@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Task {
+class TaskModel {
   final String id;
   final String tasktext;
   final bool iscomplted;
   final DateTime createadat;
-  Task({
+  TaskModel({
     required this.id,
     required this.tasktext,
     required this.createadat,
@@ -19,9 +19,9 @@ class Task {
     };
   }
 
-  factory Task.fromsnapshot(DocumentSnapshot<Map<String, dynamic>> snap) {
+  factory TaskModel.fromsnapshot(DocumentSnapshot<Map<String, dynamic>> snap) {
     final data = snap.data() ?? {};
-    return Task(
+    return TaskModel(
       id: snap.id,
       tasktext: data["tasktext"] as String,
       createadat: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
