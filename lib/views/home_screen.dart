@@ -2,29 +2,47 @@ import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:borading_week2/core/constants/appicons.dart';
 import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
 import 'package:borading_week2/core/widgets/container/rectanglecontainer.dart';
+import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
+import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
 import 'package:borading_week2/core/widgets/emptytextmessges.dart';
+import 'package:borading_week2/core/widgets/texts/boldtext.dart';
 import 'package:borading_week2/core/widgets/texts/regular_text.dart';
 import 'package:borading_week2/core/widgets/texts/semibold.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
-import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
-import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
-import 'package:borading_week2/core/widgets/texts/boldtext.dart';
 import 'package:flutter_svg/svg.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController taskcontrller = TextEditingController();
+  final TaskService taskService = TaskService();
+  int initialPendingCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // first pending count fetch cheyyuka
+    taskService.getPendingCount().then((value) {
+      setState(() {
+        initialPendingCount = value;
+      });
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController taskcontrller = TextEditingController();
-    final TaskService taskService = TaskService();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // dark background
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Stack(
           children: [
@@ -76,7 +94,6 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: screenWidth * 0.04,
@@ -95,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                           SizedBox(width: 5),
                           StreamBuilder<int>(
                             stream: taskService.pendingTasksCountStream(),
-                            initialData: 0, // <-- initial value
+                            initialData: initialPendingCount, // <-- first fetch
                             builder: (context, snapshot) {
                               final count = snapshot.data ?? 0;
                               return Circualrcontainer(
@@ -183,13 +200,12 @@ class HomeScreen extends StatelessWidget {
                                                 todo.iscomplted ? false : true,
                                               ),
                                           child:
-                                              todo.iscomplted == true
+                                              todo.iscomplted
                                                   ? Circualrcontainer(
                                                     backgroundColor:
                                                         AppColors.primaryColor,
                                                     height: 16,
                                                     width: 16.39,
-
                                                     child: Center(
                                                       child: Icon(
                                                         color:
