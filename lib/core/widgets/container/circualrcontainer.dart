@@ -24,6 +24,7 @@ class Circualrcontainer extends StatelessWidget {
       decoration:
           needborder
               ? BoxDecoration(
+                color: backgroundColor,
                 border: Border.all(color: AppColors.onSurface),
                 borderRadius: BorderRadius.circular(10),
               )

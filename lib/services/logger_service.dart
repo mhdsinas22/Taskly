@@ -20,11 +20,13 @@ class LoggerService {
   );
 
   // Shortcut methods
+  // ignore: deprecated_member_use
   void v(dynamic message) => logger.v(message);
   void d(dynamic message) => logger.d(message);
   void i(dynamic message) => logger.i(message);
   void w(dynamic message) => logger.w(message);
   void e(dynamic message, [dynamic error, StackTrace? stackTrace]) =>
       logger.e(message, error: error, stackTrace: stackTrace);
+  // ignore: deprecated_member_use
   void wtf(dynamic message) => logger.wtf(message);
 }

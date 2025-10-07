@@ -2,6 +2,7 @@ import 'package:borading_week2/services/logger_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task.dart';
 
+// ignore: constant_identifier_names
 const String TODO_COLLECTION_REF = "todos";
 
 /// Service layer for handling Firestore CRUD operations on tasks.

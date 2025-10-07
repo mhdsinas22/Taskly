@@ -165,16 +165,44 @@ class HomeScreen extends StatelessWidget {
                                   children: [
                                     Row(
                                       children: [
-                                        Circualrcontainer(
-                                          height: 16,
-                                          width: 16.39,
-                                          needborder: true,
-                                          child: Text(""),
+                                        InkWell(
+                                          onTap:
+                                              () => taskService.setCompleted(
+                                                todo.id,
+                                                todo.iscomplted ? false : true,
+                                              ),
+                                          child:
+                                              todo.iscomplted == true
+                                                  ? Circualrcontainer(
+                                                    backgroundColor:
+                                                        AppColors.primaryColor,
+                                                    height: 16,
+                                                    width: 16.39,
+
+                                                    child: Center(
+                                                      child: Icon(
+                                                        color:
+                                                            AppColors.onSurface,
+                                                        Icons.done,
+                                                        size: 10,
+                                                      ),
+                                                    ),
+                                                  )
+                                                  : Circualrcontainer(
+                                                    height: 16,
+                                                    width: 16.39,
+                                                    needborder: true,
+                                                    child: Text(""),
+                                                  ),
                                         ),
                                         SizedBox(width: 10),
                                         RegularText(
                                           text: todo.tasktext,
                                           color: AppColors.onSurface,
+                                          textDecoration:
+                                              todo.iscomplted
+                                                  ? TextDecoration.lineThrough
+                                                  : TextDecoration.none,
                                         ),
                                       ],
                                     ),
