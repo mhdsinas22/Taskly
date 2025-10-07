@@ -1,13 +1,13 @@
 import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:flutter/material.dart';
 
-class Circualrcontainer extends StatelessWidget {
+class Rectanglecontainer extends StatelessWidget {
   final double width;
   final double height;
   final Color backgroundColor;
   final Widget child;
   final bool needborder;
-  const Circualrcontainer({
+  const Rectanglecontainer({
     super.key,
     this.backgroundColor = AppColors.darkGrey,
     required this.child,
@@ -24,12 +24,12 @@ class Circualrcontainer extends StatelessWidget {
       decoration:
           needborder
               ? BoxDecoration(
-                border: Border.all(color: AppColors.onSurface),
+                border: Border.all(color: AppColors.darkGrey),
                 borderRadius: BorderRadius.circular(10),
               )
               : BoxDecoration(
                 color: backgroundColor,
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(0),
               ),
       child: child,
     );

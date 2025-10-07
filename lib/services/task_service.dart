@@ -1,21 +1,36 @@
+import 'package:borading_week2/services/logger_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task.dart';
+
+const String TODO_COLLECTION_REF = "todos";
 
 /// Service layer for handling Firestore CRUD operations on tasks.
 /// Keeps all Firebase logic separated from UI/Bloc.
 class TaskService {
   /// Reference to the `tasks` collection in Firestore
   final CollectionReference<Map<String, dynamic>> _collection =
-      FirebaseFirestore.instance.collection("tasks");
+      FirebaseFirestore.instance.collection(TODO_COLLECTION_REF);
+  final log = LoggerService(); // Singleton instance
 
   /// Add a new task
   Future<void> addTask(String text) async {
-    final task = {
-      "taskText": text,
-      "isCompleted": false,
-      "createdAt": Timestamp.now(),
-    };
-    await _collection.add(task);
+    final id = DateTime.now().millisecondsSinceEpoch.toString();
+    final task = TaskModel(
+      id: id,
+      tasktext: text,
+      createadat: Timestamp.now(),
+      iscomplted: false,
+      updatedon: Timestamp.now(),
+    );
+
+    log.i("🔥 Adding Task: ${task.tojson()}"); // info
+
+    try {
+      await _collection.doc(id).set(task.tojson());
+      log.i("✅ Task added successfully");
+    } catch (e, stack) {
+      log.e("❌ Firestore add failed", e, stack);
+    }
   }
 
   /// Update the completion status of a task

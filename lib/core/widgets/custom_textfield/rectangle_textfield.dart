@@ -3,13 +3,20 @@ import 'package:flutter/material.dart';
 
 class RectangleTextfield extends StatelessWidget {
   final String hinttext;
-  const RectangleTextfield({super.key, this.hinttext = ""});
+  final double width;
+  final double height;
+  const RectangleTextfield({
+    super.key,
+    this.hinttext = "",
+    this.width = 272,
+    this.height = 40,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 40,
-      width: 272,
+      height: height,
+      width: width,
       child: TextFormField(
         decoration: InputDecoration(
           border: OutlineInputBorder(),

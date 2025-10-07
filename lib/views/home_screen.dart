@@ -1,5 +1,9 @@
 import 'package:borading_week2/core/constants/appcolors.dart';
+import 'package:borading_week2/core/constants/appicons.dart';
 import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
+import 'package:borading_week2/core/widgets/container/rectanglecontainer.dart';
+import 'package:borading_week2/core/widgets/emptytextmessges.dart';
+import 'package:borading_week2/core/widgets/texts/regular_text.dart';
 import 'package:borading_week2/core/widgets/texts/semibold.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
@@ -7,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
 import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
 import 'package:borading_week2/core/widgets/texts/boldtext.dart';
+import 'package:flutter_svg/svg.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -49,12 +54,8 @@ class HomeScreen extends StatelessWidget {
                         onPressed: () async {
                           final task = taskcontrller.text.trim();
                           if (task.isNotEmpty) {
-                            print("task$task");
                             await taskService.addTask(task);
                             taskcontrller.clear();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Task added!')),
-                            );
                           }
                         },
                         child: Row(
@@ -131,42 +132,78 @@ class HomeScreen extends StatelessWidget {
                       }
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return Center(
-                          child: Text(
-                            "No tasks yet",
-                            style: TextStyle(color: Colors.white70),
+                          child: Column(
+                            children: [
+                              Container(
+                                color: AppColors.lightGrey,
+                                width: 360,
+                                height: 1,
+                              ),
+                              SizedBox(height: 50),
+                              Image.asset(Appicons.clipboardiconpng),
+                              SizedBox(height: 10),
+                              EmptyTaskMessage(),
+                            ],
                           ),
                         );
                       }
-
                       final tasks = snapshot.data!;
-
                       return ListView.builder(
                         itemCount: tasks.length,
                         itemBuilder: (context, index) {
                           var todo = tasks[index];
-                          return ListTile(
-                            title: Text(
-                              todo.tasktext,
-                              style: TextStyle(
-                                color: Colors.white,
-                                decoration:
-                                    todo.iscomplted
-                                        ? TextDecoration.lineThrough
-                                        : null,
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Rectanglecontainer(
+                              width: 390,
+                              height: 72,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Circualrcontainer(
+                                          height: 16,
+                                          width: 16.39,
+                                          needborder: true,
+                                          child: Text(""),
+                                        ),
+                                        SizedBox(width: 10),
+                                        RegularText(
+                                          text: todo.tasktext,
+                                          color: AppColors.onSurface,
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          Appicons.editiconsvg,
+                                          width: 16,
+                                          height: 16,
+                                        ),
+                                        SizedBox(width: 5),
+                                        InkWell(
+                                          onTap:
+                                              () => taskService.deleteTask(
+                                                todo.id,
+                                              ),
+                                          child: SvgPicture.asset(
+                                            Appicons.deleteiconsvg,
+                                            width: 16,
+                                            height: 16,
+                                          ),
+                                        ),
+                                        SizedBox(width: 5),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            trailing: Checkbox(
-                              value: todo.iscomplted,
-                              onChanged: (value) {
-                                taskService.updateTask(
-                                  todo.id,
-                                  value as String,
-                                );
-                              },
-                            ),
-                            onLongPress: () {
-                              taskService.deleteTask(todo.id);
-                            },
                           );
                         },
                       );

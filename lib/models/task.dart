@@ -4,18 +4,22 @@ class TaskModel {
   final String id;
   final String tasktext;
   final bool iscomplted;
-  final DateTime createadat;
+  final Timestamp createadat;
+  final Timestamp updatedon;
   TaskModel({
     required this.id,
     required this.tasktext,
     required this.createadat,
     required this.iscomplted,
+    required this.updatedon,
   });
   Map<String, dynamic> tojson() {
     return {
-      "tasktext": tasktext,
-      "isCompeleted": iscomplted,
-      "createdAt": Timestamp.fromDate(createadat), // store as Timestamp
+      "id": id,
+      "taskText": tasktext,
+      "isCompleted": iscomplted,
+      "createdAt": createadat, // store as Timestamp
+      "updatedAt": updatedon,
     };
   }
 
@@ -23,8 +27,9 @@ class TaskModel {
     final data = snap.data() ?? {};
     return TaskModel(
       id: snap.id,
-      tasktext: data["tasktext"] as String,
-      createadat: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      tasktext: data["taskText"] as String,
+      createadat: data['createdAt'] as Timestamp,
+      updatedon: data["updatedAt"] as Timestamp,
       iscomplted: data["isCompleted"] as bool? ?? false,
     );
   }
