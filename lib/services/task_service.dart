@@ -44,6 +44,30 @@ class TaskService {
     await _collection.doc(docId).delete();
   }
 
+  // **New function: first fetch pending tasks count**
+  Future<int> getPendingCount() async {
+    final snapshot =
+        await _collection.where('isCompleted', isEqualTo: false).get();
+    return snapshot.docs.length;
+  }
+
+  /// Stream of only pending tasks (List<TaskModel>)
+  Stream<List<TaskModel>> pendingTasksStream() {
+    return _collection
+        .where('isCompleted', isEqualTo: false) // pending tasks mathram
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) =>
+              snapshot.docs.map((doc) => TaskModel.fromsnapshot(doc)).toList(),
+        );
+  }
+
+  /// Stream of pending tasks count
+  Stream<int> pendingTasksCountStream() {
+    return pendingTasksStream().map((list) => list.length);
+  }
+
   /// Update the text of a task
   Future<void> updateTask(String docId, String taskText) async {
     await _collection.doc(docId).update({"taskText": taskText});

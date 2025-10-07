@@ -76,6 +76,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: screenWidth * 0.04,
@@ -92,13 +93,23 @@ class HomeScreen extends StatelessWidget {
                             color: AppColors.primaryColor,
                           ),
                           SizedBox(width: 5),
-                          Circualrcontainer(
-                            width: 22,
-                            height: 19,
-                            backgroundColor: AppColors.darkGrey,
-                            child: Center(
-                              child: SemiBold(text: "1", fontsize: 12),
-                            ),
+                          StreamBuilder<int>(
+                            stream: taskService.pendingTasksCountStream(),
+                            initialData: 0, // <-- initial value
+                            builder: (context, snapshot) {
+                              final count = snapshot.data ?? 0;
+                              return Circualrcontainer(
+                                width: 22,
+                                height: 19,
+                                backgroundColor: AppColors.darkGrey,
+                                child: Center(
+                                  child: SemiBold(
+                                    text: count.toString(),
+                                    fontsize: 12,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
