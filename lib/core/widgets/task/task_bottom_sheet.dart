@@ -1,33 +1,40 @@
+import 'package:borading_week2/bloc/task_bloc/task_bloc.dart';
+import 'package:borading_week2/bloc/task_bloc/task_event.dart';
 import 'package:borading_week2/core/constants/appicons.dart';
 import 'package:borading_week2/core/widgets/custom_textfield/rectangle_textfield.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 
 class TaskBottomSheet extends StatelessWidget {
   final TextEditingController taskcontroller;
-  final TaskService taskService;
+  final TaskService? taskService;
   final TaskModel? taskModel;
+
   const TaskBottomSheet({
     super.key,
     required this.taskcontroller,
     this.taskModel,
-    required this.taskService,
+    this.taskService,
   });
 
   @override
   Widget build(BuildContext context) {
     final isEdit = taskModel != null;
+
+    // Set initial text if editing
     if (isEdit) {
       taskcontroller.text = taskModel!.tasktext;
     }
+
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Container(
-        padding: EdgeInsets.all(24),
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,34 +42,41 @@ class TaskBottomSheet extends StatelessWidget {
             // Title
             Text(
               isEdit ? "Edit Task" : 'Add Task',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
+            // Textfield
             RectangleTextfield(
               height: 43,
               width: 325,
               hinttext: "Enter a task",
               controller: taskcontroller,
             ),
-            // Text field
-            SizedBox(height: 12),
-            // Send button (right-aligned)
+            const SizedBox(height: 12),
+            // Send button
             Align(
               alignment: Alignment.centerRight,
               child: InkWell(
-                onTap: () async {
+                onTap: () {
                   final text = taskcontroller.text.trim();
                   if (text.isNotEmpty) {
                     if (isEdit) {
-                      await taskService.updateTask(taskModel!.id, text);
+                      // Update task with new text
+                      context.read<TaskBloc>().add(
+                        UpdateTask(taskModel!.id, text, taskModel!.iscomplted),
+                      );
                     } else {
-                      await taskService.addTask(text);
+                      // Add new task
+                      context.read<TaskBloc>().add(AddTask(text));
                     }
+
                     taskcontroller.clear();
+
+                    // Close bottom sheet
                     Navigator.pop(context);
                   }
                 },

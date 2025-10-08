@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:borading_week2/services/logger_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task.dart';
@@ -12,6 +14,8 @@ class TaskService {
   final CollectionReference<Map<String, dynamic>> _collection =
       FirebaseFirestore.instance.collection(TODO_COLLECTION_REF);
   final log = LoggerService(); // Singleton instance
+  final StreamController<String> _serachcontroller =
+      StreamController<String>.broadcast();
 
   /// Add a new task
   Future<void> addTask(String text) async {
@@ -34,6 +38,27 @@ class TaskService {
     }
   }
 
+  // Current search term
+  void setSearchTerm(String term) {
+    _serachcontroller.add(term);
+  }
+
+  // Stream of filtered tasks
+  // Stream<List<TaskModel>> filteredTasksStream() {
+  //   return Rx.combineLatest2<List<TaskModel>, String, List<TaskModel>>(
+  //     tasksStream(), // all tasks from firestore
+  //     _serachcontroller.stream.startWith(''),
+  //     (tasks, search) {
+  //       if (search.isEmpty) return tasks;
+  //       return tasks
+  //           .where(
+  //             (task) => task.title.toLowerCase().contains(search.toLowerCase()),
+  //           )
+  //           .toList();
+  //     },
+  //   );
+  // }
+
   /// Update the completion status of a task
   Future<void> setCompleted(String docId, bool isCompleted) async {
     await _collection.doc(docId).update({"isCompleted": isCompleted});
@@ -51,7 +76,8 @@ class TaskService {
     return snapshot.docs.length;
   }
 
-  /// Stream of only pending tasks (List<TaskModel>)
+  // ignore: unintended_html_in_doc_comment
+  /// Stream of only pending tasks List<TaskModel>
   Stream<List<TaskModel>> pendingTasksStream() {
     return _collection
         .where('isCompleted', isEqualTo: false) // pending tasks mathram
@@ -69,7 +95,11 @@ class TaskService {
   }
 
   /// Update the text of a task
-  Future<void> updateTask(String docId, String taskText) async {
+  Future<void> updateTask(
+    String docId,
+    String taskText,
+    bool iscompelde,
+  ) async {
     await _collection.doc(docId).update({"taskText": taskText});
   }
 

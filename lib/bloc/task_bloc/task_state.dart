@@ -12,9 +12,12 @@ class TaskLoading extends TaskState {}
 
 class TaskLoaded extends TaskState {
   final List<TaskModel> tasks;
-  TaskLoaded(this.tasks);
+  final String searchQuery;
+
+  TaskLoaded(this.tasks, {this.searchQuery = ""});
+
   @override
-  List<Object?> get props => [tasks];
+  List<Object?> get props => [tasks, searchQuery]; // ✅ include searchQuery
 }
 
 class TaskError extends TaskState {

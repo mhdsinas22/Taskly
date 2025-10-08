@@ -1,29 +1,42 @@
+import 'package:borading_week2/bloc/task_bloc/task_bloc.dart';
+import 'package:borading_week2/bloc/task_bloc/task_event.dart';
 import 'package:borading_week2/core/constants/appcolors.dart';
-import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
-import 'package:borading_week2/core/widgets/task/task_list_view.dart';
-import 'package:borading_week2/core/widgets/task/task_bottom_sheet.dart';
-import 'package:borading_week2/core/widgets/texts/semibold.dart';
-import 'package:borading_week2/services/task_service.dart';
-import 'package:flutter/material.dart';
 import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
 import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
+import 'package:borading_week2/core/widgets/task/task_bottom_sheet.dart';
+import 'package:borading_week2/core/widgets/task/task_list_view.dart';
+import 'package:borading_week2/core/widgets/task/task_status_row.dart';
 import 'package:borading_week2/core/widgets/texts/boldtext.dart';
+import 'package:borading_week2/services/task_service.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final TaskService taskService;
+  const HomeScreen({super.key, required this.taskService});
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController taskcontrller = TextEditingController();
-    final TaskService taskService = TaskService();
+    final TextEditingController taskController = TextEditingController();
+    final TextEditingController serachcontorller = TextEditingController();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    // Scaling factors (you can adjust based on your design)
+    double paddingHorizontal = screenWidth * 0.04;
+    double paddingVertical = screenHeight * 0.02;
+    double buttonHeight = screenHeight * 0.06;
+    double buttonWidth = screenWidth * 0.25;
+    double topSpacing = screenHeight * 0.15;
+    double fontSizeSmall = screenWidth * 0.035;
+    double fontSizeCount = screenWidth * 0.03;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF121212), // dark background
+      backgroundColor: const Color(0xFF121212),
       body: SafeArea(
         child: Stack(
           children: [
+            // Top background
             Container(
               width: double.infinity,
               height: screenHeight * 0.2,
@@ -31,119 +44,74 @@ class HomeScreen extends StatelessWidget {
             ),
             Column(
               children: [
-                SizedBox(height: 120),
+                SizedBox(height: topSpacing),
                 // 🔝 Top Search + Add
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04,
-                    vertical: screenHeight * 0.02,
+                    horizontal: paddingHorizontal,
+                    vertical: paddingVertical,
                   ),
                   child: Row(
                     children: [
                       Expanded(
-                        child: CircularTextField(hinttext: "🚀 Search..."),
+                        child: CircularTextField(
+                          hinttext: "🚀 Search...",
+                          controller: serachcontorller,
+                          onChanged: (value) {
+                            context.read<TaskBloc>().add(SearchTasks(value));
+                          },
+                        ),
                       ),
                       SizedBox(width: screenWidth * 0.02),
                       CircularButton(
-                        width: screenWidth * 0.25,
-                        height: screenHeight * 0.06,
+                        width: buttonWidth,
+                        height: buttonHeight,
                         onPressed: () async {
-                          // Bottom sheet or modal structure
                           showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             backgroundColor: Colors.grey[900],
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(20),
+                                top: Radius.circular(screenWidth * 0.05),
                               ),
                             ),
                             builder:
-                                (context) => TaskBottomSheet(
-                                  taskcontroller: taskcontrller,
-                                  taskService: taskService,
+                                (context) => BlocProvider.value(
+                                  value: BlocProvider.of<TaskBloc>(context),
+                                  child: TaskBottomSheet(
+                                    taskcontroller: taskController,
+                                    taskService: taskService,
+                                  ),
                                 ),
                           );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            BoldText(
-                              text: "Add",
-                              fontsize: screenWidth * 0.035,
-                            ),
+                            BoldText(text: "Add", fontsize: fontSizeSmall),
                             SizedBox(width: screenWidth * 0.01),
-                            Icon(
-                              Icons.add_circle_outline,
-                              size: screenWidth * 0.04,
-                            ),
+                            Icon(Icons.add_circle_outline, size: fontSizeSmall),
                           ],
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.04,
-                    vertical: screenHeight * 0.02,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          SemiBold(
-                            text: "Pending",
-                            fontsize: 14,
-                            color: AppColors.primaryColor,
-                          ),
-                          SizedBox(width: 5),
-                          StreamBuilder<int>(
-                            stream: taskService.pendingTasksCountStream(),
-                            initialData: 0, // <-- initial value
-                            builder: (context, snapshot) {
-                              final count = snapshot.data ?? 0;
-                              return Circualrcontainer(
-                                width: 22,
-                                height: 19,
-                                backgroundColor: AppColors.darkGrey,
-                                child: Center(
-                                  child: SemiBold(
-                                    text: count.toString(),
-                                    fontsize: 12,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SemiBold(
-                            text: "Completed",
-                            fontsize: 14,
-                            color: AppColors.primaryColor,
-                          ),
-                          SizedBox(width: 5),
-                          Circualrcontainer(
-                            width: 40,
-                            height: 19,
-                            backgroundColor: AppColors.darkGrey,
-                            child: Center(
-                              child: SemiBold(text: "1/2", fontsize: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                // Pending + Completed row
+                TaskStatusRow(
+                  screenWidth: screenWidth,
+                  screenHeight: screenHeight,
+                  fontSizeSmall: fontSizeSmall,
+                  fontSizeCount: fontSizeCount,
+                  paddingHorizontal: paddingHorizontal,
+                  paddingVertical: paddingVertical,
                 ),
+                // Task List
                 TaskListView(
+                  serachcontroller: serachcontorller,
                   taskService: taskService,
-                  taskcontroller: taskcontrller,
+                  taskcontroller: taskController,
                 ),
               ],
             ),

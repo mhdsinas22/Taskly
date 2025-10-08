@@ -5,11 +5,18 @@ import 'package:flutter/material.dart';
 class CircularTextField extends StatelessWidget {
   final TextEditingController? controller;
   final String hinttext;
-  const CircularTextField({super.key, this.hinttext = "", this.controller});
+  final ValueChanged? onChanged;
+  const CircularTextField({
+    super.key,
+    this.hinttext = "",
+    this.controller,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChanged,
       controller: controller,
       style: TextStyle(color: AppColors.onSurface),
       decoration: InputDecoration(

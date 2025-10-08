@@ -1,3 +1,5 @@
+import 'package:borading_week2/bloc/task_bloc/task_bloc.dart';
+import 'package:borading_week2/bloc/task_bloc/task_event.dart';
 import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:borading_week2/core/constants/appicons.dart';
 
@@ -9,6 +11,7 @@ import 'package:borading_week2/core/widgets/texts/regular_text.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskTile extends StatelessWidget {
   final TaskModel taskModel;
@@ -38,9 +41,11 @@ class TaskTile extends StatelessWidget {
                   TaskCheckbox(
                     isCompleted: taskModel.iscomplted,
                     onTap:
-                        () => taskService.setCompleted(
-                          taskModel.id,
-                          !taskModel.iscomplted,
+                        () => context.read<TaskBloc>().add(
+                          ToggleTaskCompletion(
+                            taskModel.id,
+                            !taskModel.iscomplted,
+                          ),
                         ),
                   ),
                   SizedBox(width: 10),
@@ -81,7 +86,10 @@ class TaskTile extends StatelessWidget {
                   SizedBox(width: 5),
                   TaskActionButton(
                     iconPath: Appicons.deleteiconsvg,
-                    onTap: () => taskService.deleteTask(taskModel.id),
+                    onTap:
+                        () => context.read<TaskBloc>().add(
+                          DeleteTask(taskModel.id),
+                        ),
                   ),
                   SizedBox(width: 5),
                 ],
