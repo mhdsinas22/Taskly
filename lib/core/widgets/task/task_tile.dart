@@ -4,7 +4,7 @@ import 'package:borading_week2/core/constants/appicons.dart';
 import 'package:borading_week2/core/widgets/container/rectanglecontainer.dart';
 import 'package:borading_week2/core/widgets/task/task_action_button.dart';
 import 'package:borading_week2/core/widgets/task/task_checkbox.dart';
-import 'package:borading_week2/core/widgets/task_bottom_sheet.dart';
+import 'package:borading_week2/core/widgets/task/task_bottom_sheet.dart';
 import 'package:borading_week2/core/widgets/texts/regular_text.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
