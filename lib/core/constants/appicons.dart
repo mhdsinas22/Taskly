@@ -5,4 +5,5 @@ class Appicons {
   static const editiconpng = "assets/icons/edit-2.png";
   static const deleteiconsvg = "assets/icons/Layer 2 (1).svg";
   static const deleteiconpng = "assets/icons/Layer 2 (1).png";
+  static const senticonpng = "assets/icons/send.svg";
 }

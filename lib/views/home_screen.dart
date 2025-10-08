@@ -1,48 +1,26 @@
 import 'package:borading_week2/core/constants/appcolors.dart';
-import 'package:borading_week2/core/constants/appicons.dart';
 import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
-import 'package:borading_week2/core/widgets/container/rectanglecontainer.dart';
-import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
-import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
-import 'package:borading_week2/core/widgets/emptytextmessges.dart';
-import 'package:borading_week2/core/widgets/texts/boldtext.dart';
-import 'package:borading_week2/core/widgets/texts/regular_text.dart';
+import 'package:borading_week2/core/widgets/task/task_list_view.dart';
+import 'package:borading_week2/core/widgets/task_bottom_sheet.dart';
 import 'package:borading_week2/core/widgets/texts/semibold.dart';
-import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:borading_week2/core/widgets/custom_button/circular_button.dart';
+import 'package:borading_week2/core/widgets/custom_textfield/circular_textfield.dart';
+import 'package:borading_week2/core/widgets/texts/boldtext.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController taskcontrller = TextEditingController();
-  final TaskService taskService = TaskService();
-  int initialPendingCount = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    // first pending count fetch cheyyuka
-    taskService.getPendingCount().then((value) {
-      setState(() {
-        initialPendingCount = value;
-      });
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final TextEditingController taskcontrller = TextEditingController();
+    final TaskService taskService = TaskService();
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+      backgroundColor: const Color(0xFF121212), // dark background
       body: SafeArea(
         child: Stack(
           children: [
@@ -70,11 +48,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: screenWidth * 0.25,
                         height: screenHeight * 0.06,
                         onPressed: () async {
-                          final task = taskcontrller.text.trim();
-                          if (task.isNotEmpty) {
-                            await taskService.addTask(task);
-                            taskcontrller.clear();
-                          }
+                          // Bottom sheet or modal structure
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.grey[900],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(20),
+                              ),
+                            ),
+                            builder:
+                                (context) => TaskBottomSheet(
+                                  taskcontroller: taskcontrller,
+                                  taskService: taskService,
+                                ),
+                          );
                         },
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -94,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: screenWidth * 0.04,
@@ -112,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           SizedBox(width: 5),
                           StreamBuilder<int>(
                             stream: taskService.pendingTasksCountStream(),
-                            initialData: initialPendingCount, // <-- first fetch
+                            initialData: 0, // <-- initial value
                             builder: (context, snapshot) {
                               final count = snapshot.data ?? 0;
                               return Circualrcontainer(
@@ -151,123 +141,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: StreamBuilder<List<TaskModel>>(
-                    stream: taskService.tasksStream(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                color: AppColors.lightGrey,
-                                width: 360,
-                                height: 1,
-                              ),
-                              SizedBox(height: 50),
-                              Image.asset(Appicons.clipboardiconpng),
-                              SizedBox(height: 10),
-                              EmptyTaskMessage(),
-                            ],
-                          ),
-                        );
-                      }
-                      final tasks = snapshot.data!;
-                      return ListView.builder(
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          var todo = tasks[index];
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Rectanglecontainer(
-                              width: 390,
-                              height: 72,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        InkWell(
-                                          onTap:
-                                              () => taskService.setCompleted(
-                                                todo.id,
-                                                todo.iscomplted ? false : true,
-                                              ),
-                                          child:
-                                              todo.iscomplted
-                                                  ? Circualrcontainer(
-                                                    backgroundColor:
-                                                        AppColors.primaryColor,
-                                                    height: 16,
-                                                    width: 16.39,
-                                                    child: Center(
-                                                      child: Icon(
-                                                        color:
-                                                            AppColors.onSurface,
-                                                        Icons.done,
-                                                        size: 10,
-                                                      ),
-                                                    ),
-                                                  )
-                                                  : Circualrcontainer(
-                                                    height: 16,
-                                                    width: 16.39,
-                                                    needborder: true,
-                                                    child: Text(""),
-                                                  ),
-                                        ),
-                                        SizedBox(width: 10),
-                                        RegularText(
-                                          text: todo.tasktext,
-                                          color: AppColors.onSurface,
-                                          textDecoration:
-                                              todo.iscomplted
-                                                  ? TextDecoration.lineThrough
-                                                  : TextDecoration.none,
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        SvgPicture.asset(
-                                          Appicons.editiconsvg,
-                                          width: 16,
-                                          height: 16,
-                                        ),
-                                        SizedBox(width: 5),
-                                        InkWell(
-                                          onTap:
-                                              () => taskService.deleteTask(
-                                                todo.id,
-                                              ),
-                                          child: SvgPicture.asset(
-                                            Appicons.deleteiconsvg,
-                                            width: 16,
-                                            height: 16,
-                                          ),
-                                        ),
-                                        SizedBox(width: 5),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-                CircularTextField(
-                  hinttext: "Enter a task",
-                  controller: taskcontrller,
+                TaskListView(
+                  taskService: taskService,
+                  taskcontroller: taskcontrller,
                 ),
               ],
             ),
