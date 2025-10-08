@@ -7,6 +7,7 @@ class Rectanglecontainer extends StatelessWidget {
   final Color backgroundColor;
   final Widget child;
   final bool needborder;
+  final EdgeInsetsGeometry? margin;
   const Rectanglecontainer({
     super.key,
     this.backgroundColor = AppColors.darkGrey,
@@ -14,11 +15,13 @@ class Rectanglecontainer extends StatelessWidget {
     this.height = 400,
     this.width = 382,
     this.needborder = false,
+    this.margin,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: margin,
       width: width,
       height: height,
       decoration:

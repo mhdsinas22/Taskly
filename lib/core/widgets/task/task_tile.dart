@@ -2,8 +2,7 @@ import 'package:borading_week2/bloc/task_bloc/task_bloc.dart';
 import 'package:borading_week2/bloc/task_bloc/task_event.dart';
 import 'package:borading_week2/core/constants/appcolors.dart';
 import 'package:borading_week2/core/constants/appicons.dart';
-
-import 'package:borading_week2/core/widgets/container/rectanglecontainer.dart';
+import 'package:borading_week2/core/widgets/container/circualrcontainer.dart';
 import 'package:borading_week2/core/widgets/task/task_action_button.dart';
 import 'package:borading_week2/core/widgets/task/task_checkbox.dart';
 import 'package:borading_week2/core/widgets/task/task_bottom_sheet.dart';
@@ -28,11 +27,13 @@ class TaskTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: Rectanglecontainer(
+      child: Circualrcontainer(
+        borderradius: 4,
+        marign: const EdgeInsets.symmetric(horizontal: 16),
         width: 390,
         height: 72,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

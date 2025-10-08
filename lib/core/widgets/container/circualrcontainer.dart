@@ -7,6 +7,8 @@ class Circualrcontainer extends StatelessWidget {
   final Color backgroundColor;
   final Widget child;
   final bool needborder;
+  final double borderradius;
+  final EdgeInsetsGeometry? marign;
   const Circualrcontainer({
     super.key,
     this.backgroundColor = AppColors.darkGrey,
@@ -14,11 +16,14 @@ class Circualrcontainer extends StatelessWidget {
     this.height = 400,
     this.width = 382,
     this.needborder = false,
+    this.marign,
+    this.borderradius = 999,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: marign,
       width: width,
       height: height,
       decoration:
@@ -26,11 +31,11 @@ class Circualrcontainer extends StatelessWidget {
               ? BoxDecoration(
                 color: backgroundColor,
                 border: Border.all(color: AppColors.onSurface),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(borderradius),
               )
               : BoxDecoration(
                 color: backgroundColor,
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(borderradius),
               ),
       child: child,
     );

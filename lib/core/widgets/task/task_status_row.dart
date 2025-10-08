@@ -47,23 +47,33 @@ class TaskStatusRow extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // Pending
-              _buildStatusItem(
-                label: "Pending",
-                count: pending.toString(),
-                width: screenWidth * 0.06,
-                height: screenHeight * 0.025,
-                fontSizeLabel: fontSizeSmall,
-                fontSizeCount: fontSizeCount,
+              Row(
+                children: [
+                  SizedBox(width: 10),
+                  _buildStatusItem(
+                    label: "Pending",
+                    count: pending.toString(),
+                    width: screenWidth * 0.06,
+                    height: screenHeight * 0.025,
+                    fontSizeLabel: fontSizeSmall,
+                    fontSizeCount: fontSizeCount,
+                  ),
+                ],
               ),
 
               // Completed
-              _buildStatusItem(
-                label: "Completed",
-                count: "$completed/$total",
-                width: screenWidth * 0.09,
-                height: screenHeight * 0.025,
-                fontSizeLabel: fontSizeSmall,
-                fontSizeCount: fontSizeCount,
+              Row(
+                children: [
+                  _buildStatusItemLeftSide(
+                    label: "Completed",
+                    count: "$completed/$total",
+                    width: screenWidth * 0.09,
+                    height: screenHeight * 0.025,
+                    fontSizeLabel: fontSizeSmall,
+                    fontSizeCount: fontSizeCount,
+                  ),
+                  SizedBox(width: 10),
+                ],
               ),
             ],
           );
@@ -73,6 +83,32 @@ class TaskStatusRow extends StatelessWidget {
   }
 
   Widget _buildStatusItem({
+    required String label,
+    required String count,
+    required double width,
+    required double height,
+    required double fontSizeLabel,
+    required double fontSizeCount,
+  }) {
+    return Row(
+      children: [
+        SemiBold(
+          text: label,
+          fontsize: fontSizeLabel,
+          color: AppColors.skyblue,
+        ),
+        SizedBox(width: screenWidth * 0.01),
+        Circualrcontainer(
+          width: width,
+          height: height,
+          backgroundColor: AppColors.darkGrey,
+          child: Center(child: SemiBold(text: count, fontsize: fontSizeCount)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusItemLeftSide({
     required String label,
     required String count,
     required double width,
