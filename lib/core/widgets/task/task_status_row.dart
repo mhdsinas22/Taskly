@@ -49,7 +49,7 @@ class TaskStatusRow extends StatelessWidget {
               // Pending
               Row(
                 children: [
-                  SizedBox(width: 10),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                   _buildStatusItem(
                     label: "Pending",
                     count: pending.toString(),
@@ -66,13 +66,13 @@ class TaskStatusRow extends StatelessWidget {
                 children: [
                   _buildStatusItemLeftSide(
                     label: "Completed",
-                    count: "$completed/$total",
+                    count: total == 0 ? "0" : "$completed/$total",
                     width: screenWidth * 0.09,
                     height: screenHeight * 0.025,
                     fontSizeLabel: fontSizeSmall,
                     fontSizeCount: fontSizeCount,
                   ),
-                  SizedBox(width: 10),
+                  SizedBox(width: MediaQuery.of(context).size.width * 0.02),
                 ],
               ),
             ],
