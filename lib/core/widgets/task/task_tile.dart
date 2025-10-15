@@ -40,21 +40,21 @@ class TaskTile extends StatelessWidget {
               Row(
                 children: [
                   TaskCheckbox(
-                    isCompleted: taskModel.iscomplted,
+                    isCompleted: taskModel.isCompleted,
                     onTap:
                         () => context.read<TaskBloc>().add(
                           ToggleTaskCompletion(
                             taskModel.id,
-                            !taskModel.iscomplted,
+                            !taskModel.isCompleted,
                           ),
                         ),
                   ),
                   SizedBox(width: 10),
                   RegularText(
-                    text: taskModel.tasktext,
+                    text: taskModel.taskText,
                     color: AppColors.onSurface,
                     textDecoration:
-                        taskModel.iscomplted
+                        taskModel.isCompleted
                             ? TextDecoration.lineThrough
                             : TextDecoration.none,
                   ),

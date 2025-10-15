@@ -22,16 +22,16 @@ class TaskService {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     final task = TaskModel(
       id: id,
-      tasktext: text,
-      createadat: Timestamp.now(),
-      iscomplted: false,
-      updatedon: Timestamp.now(),
+      taskText: text,
+      createdAt: Timestamp.now(),
+      isCompleted: false,
+      updatedAt: Timestamp.now(),
     );
 
-    log.i("🔥 Adding Task: ${task.tojson()}"); // info
+    log.i("🔥 Adding Task: ${task.toJson()}"); // info
 
     try {
-      await _collection.doc(id).set(task.tojson());
+      await _collection.doc(id).set(task.toJson());
       log.i("✅ Task added successfully");
     } catch (e, stack) {
       log.e("❌ Firestore add failed", e, stack);
@@ -85,7 +85,7 @@ class TaskService {
         .snapshots()
         .map(
           (snapshot) =>
-              snapshot.docs.map((doc) => TaskModel.fromsnapshot(doc)).toList(),
+              snapshot.docs.map((doc) => TaskModel.fromSnapshot(doc)).toList(),
         );
   }
 
@@ -110,7 +110,7 @@ class TaskService {
         .snapshots()
         .map(
           (query) =>
-              query.docs.map((doc) => TaskModel.fromsnapshot(doc)).toList(),
+              query.docs.map((doc) => TaskModel.fromSnapshot(doc)).toList(),
         );
   }
 
@@ -118,6 +118,6 @@ class TaskService {
   Future<List<TaskModel>> fetchTasksOnce() async {
     final snapshot =
         await _collection.orderBy('createdAt', descending: true).get();
-    return snapshot.docs.map((doc) => TaskModel.fromsnapshot(doc)).toList();
+    return snapshot.docs.map((doc) => TaskModel.fromSnapshot(doc)).toList();
   }
 }

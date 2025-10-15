@@ -37,8 +37,8 @@ class TaskStatusRow extends StatelessWidget {
           int completed = 0;
 
           if (state is TaskLoaded) {
-            pending = state.tasks.where((t) => !t.iscomplted).length;
-            completed = state.tasks.where((t) => t.iscomplted).length;
+            pending = state.tasks.where((t) => !t.isCompleted).length;
+            completed = state.tasks.where((t) => t.isCompleted).length;
           }
 
           int total = pending + completed;

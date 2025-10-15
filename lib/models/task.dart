@@ -2,35 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class TaskModel {
   final String id;
-  final String tasktext;
-  final bool iscomplted;
-  final Timestamp createadat;
-  final Timestamp updatedon;
+  final String taskText;
+  final bool isCompleted;
+  final Timestamp createdAt;
+  final Timestamp updatedAt;
+
   TaskModel({
     required this.id,
-    required this.tasktext,
-    required this.createadat,
-    required this.iscomplted,
-    required this.updatedon,
+    required this.taskText,
+    required this.isCompleted,
+    required this.createdAt,
+    required this.updatedAt,
   });
-  Map<String, dynamic> tojson() {
+
+  /// Converts TaskModel instance to JSON for Firestore
+  Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "taskText": tasktext,
-      "isCompleted": iscomplted,
-      "createdAt": createadat, // store as Timestamp
-      "updatedAt": updatedon,
+      "taskText": taskText,
+      "isCompleted": isCompleted,
+      "createdAt": createdAt,
+      "updatedAt": updatedAt,
     };
   }
 
-  factory TaskModel.fromsnapshot(DocumentSnapshot<Map<String, dynamic>> snap) {
+  /// Creates a TaskModel from Firestore DocumentSnapshot
+  factory TaskModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> snap) {
     final data = snap.data() ?? {};
     return TaskModel(
       id: snap.id,
-      tasktext: data["taskText"] as String,
-      createadat: data['createdAt'] as Timestamp,
-      updatedon: data["updatedAt"] as Timestamp,
-      iscomplted: data["isCompleted"] as bool? ?? false,
+      taskText: data["taskText"] as String? ?? "",
+      isCompleted: data["isCompleted"] as bool? ?? false,
+      createdAt: data["createdAt"] as Timestamp? ?? Timestamp.now(),
+      updatedAt: data["updatedAt"] as Timestamp? ?? Timestamp.now(),
     );
   }
 }

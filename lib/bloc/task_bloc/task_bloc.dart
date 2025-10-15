@@ -72,7 +72,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final filtered =
         _allTasks
             .where(
-              (t) => t.tasktext.toLowerCase().contains(
+              (t) => t.taskText.toLowerCase().contains(
                 _currentQuery.toLowerCase(),
               ),
             )

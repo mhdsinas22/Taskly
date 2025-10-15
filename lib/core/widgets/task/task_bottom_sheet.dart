@@ -26,7 +26,7 @@ class TaskBottomSheet extends StatelessWidget {
 
     // Set initial text if editing
     if (isEdit) {
-      taskcontroller.text = taskModel!.tasktext;
+      taskcontroller.text = taskModel!.taskText;
     }
 
     return Padding(
@@ -67,7 +67,7 @@ class TaskBottomSheet extends StatelessWidget {
                     if (isEdit) {
                       // Update task with new text
                       context.read<TaskBloc>().add(
-                        UpdateTask(taskModel!.id, text, taskModel!.iscomplted),
+                        UpdateTask(taskModel!.id, text, taskModel!.isCompleted),
                       );
                     } else {
                       // Add new task

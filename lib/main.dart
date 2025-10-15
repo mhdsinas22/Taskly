@@ -2,7 +2,6 @@
 // Author: Mohame Sinas P
 // Purpose: Initializes and launches the Flutter application with Bloc setup
 // Date: 8/10/2025
-// Notes: This file now provides TaskBloc globally for the app
 
 import 'package:borading_week2/app.dart';
 import 'package:borading_week2/services/task_service.dart';
