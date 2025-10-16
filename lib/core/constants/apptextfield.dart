@@ -7,6 +7,6 @@ class Apptextfield {
     borderRadius: BorderRadius.circular(10),
   );
   static OutlineInputBorder squareborder = OutlineInputBorder(
-    borderSide: BorderSide(color: AppColors.onSurface, width: 2),
+    borderSide: BorderSide(color: AppColors.onSurface, width: 1),
   );
 }
