@@ -2,6 +2,7 @@ import 'package:borading_week2/bloc/task_bloc/task_event.dart';
 import 'package:borading_week2/bloc/task_bloc/task_state.dart';
 import 'package:borading_week2/models/task.dart';
 import 'package:borading_week2/services/task_service.dart';
+import 'package:cloud_firestore_platform_interface/src/timestamp.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaskBloc extends Bloc<TaskEvent, TaskState> {
@@ -24,7 +25,11 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     // Add new task
     on<AddTask>((event, emit) async {
       try {
-        await taskService.addTask(event.text);
+        await taskService.addTask(
+          event.title,
+          event.description,
+          event.dueDate,
+        );
         add(LoadTask()); // reload tasks
       } catch (e) {
         emit(TaskError(e.toString()));
@@ -36,8 +41,9 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       try {
         await taskService.updateTask(
           event.id,
-          event.newText,
-          event.isCompleted,
+          event.newTitle,
+          event.newDescription,
+          event.newDueDate as Timestamp,
         );
         add(LoadTask()); // reload tasks
       } catch (e) {
@@ -72,9 +78,8 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     final filtered =
         _allTasks
             .where(
-              (t) => t.taskText.toLowerCase().contains(
-                _currentQuery.toLowerCase(),
-              ),
+              (t) =>
+                  t.title.toLowerCase().contains(_currentQuery.toLowerCase()),
             )
             .toList();
     emit(TaskLoaded(filtered, searchQuery: _currentQuery));

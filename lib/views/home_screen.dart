@@ -80,7 +80,6 @@ class HomeScreen extends StatelessWidget {
                                 (context) => BlocProvider.value(
                                   value: BlocProvider.of<TaskBloc>(context),
                                   child: TaskBottomSheet(
-                                    taskcontroller: taskController,
                                     taskService: taskService,
                                   ),
                                 ),

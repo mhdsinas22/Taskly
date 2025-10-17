@@ -7,27 +7,37 @@ import 'package:borading_week2/services/task_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intl/intl.dart';
 
-class TaskBottomSheet extends StatelessWidget {
-  final TextEditingController taskcontroller;
+class TaskBottomSheet extends StatefulWidget {
   final TaskService? taskService;
   final TaskModel? taskModel;
 
-  const TaskBottomSheet({
-    super.key,
-    required this.taskcontroller,
-    this.taskModel,
-    this.taskService,
-  });
+  const TaskBottomSheet({super.key, this.taskModel, this.taskService});
+
+  @override
+  State<TaskBottomSheet> createState() => _TaskBottomSheetState();
+}
+
+class _TaskBottomSheetState extends State<TaskBottomSheet> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  DateTime? _selectedDate;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill fields if editing
+    if (widget.taskModel != null) {
+      _titleController.text = widget.taskModel!.title;
+      _descriptionController.text = widget.taskModel!.description;
+      _selectedDate = widget.taskModel!.dueDate.toDate();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isEdit = taskModel != null;
-
-    // Set initial text if editing
-    if (isEdit) {
-      taskcontroller.text = taskModel!.taskText;
-    }
+    final isEdit = widget.taskModel != null;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -35,13 +45,16 @@ class TaskBottomSheet extends StatelessWidget {
       ),
       child: Container(
         padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: Colors.black87,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
             Text(
-              isEdit ? "Edit Task" : 'Add Task',
+              isEdit ? "Edit Task" : "Add Task",
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 20,
@@ -49,34 +62,92 @@ class TaskBottomSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            // Textfield
+
+            // 🔹 Title field
             RectangleTextfield(
-              height: 43,
+              height: 45,
               width: 325,
-              hinttext: "Enter a task",
-              controller: taskcontroller,
+              hinttext: "Enter Title",
+              controller: _titleController,
             ),
             const SizedBox(height: 12),
-            // Send button
+
+            // 🔹 Description field
+            RectangleTextfield(
+              height: 45,
+              width: 325,
+              hinttext: "Enter Description",
+              controller: _descriptionController,
+            ),
+            const SizedBox(height: 12),
+
+            // 🔹 Due Date picker
+            InkWell(
+              onTap: () async {
+                final pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: _selectedDate ?? DateTime.now(),
+                  firstDate: DateTime(2020),
+                  lastDate: DateTime(2030),
+                );
+                if (pickedDate != null) {
+                  setState(() {
+                    _selectedDate = pickedDate;
+                  });
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      _selectedDate != null
+                          ? DateFormat('dd MMM yyyy').format(_selectedDate!)
+                          : "Select Due Date",
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                    const Icon(Icons.calendar_today, color: Colors.white70),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // 🔹 Send button
             Align(
               alignment: Alignment.centerRight,
               child: InkWell(
                 onTap: () {
-                  final text = taskcontroller.text.trim();
-                  if (text.isNotEmpty) {
+                  final title = _titleController.text.trim();
+                  final description = _descriptionController.text.trim();
+
+                  if (title.isNotEmpty &&
+                      description.isNotEmpty &&
+                      _selectedDate != null) {
                     if (isEdit) {
-                      // Update task with new text
                       context.read<TaskBloc>().add(
-                        UpdateTask(taskModel!.id, text, taskModel!.isCompleted),
+                        UpdateTask(
+                          widget.taskModel!.id,
+                          title,
+                          description,
+                          _selectedDate!,
+                          widget.taskModel!.isCompleted,
+                        ),
                       );
                     } else {
-                      // Add new task
-                      context.read<TaskBloc>().add(AddTask(text));
+                      context.read<TaskBloc>().add(
+                        AddTask(title, description, _selectedDate!),
+                      );
                     }
 
-                    taskcontroller.clear();
-
-                    // Close bottom sheet
                     Navigator.pop(context);
                   }
                 },

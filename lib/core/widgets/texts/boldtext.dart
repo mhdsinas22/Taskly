@@ -6,12 +6,14 @@ class BoldText extends StatelessWidget {
   final double fontsize;
   final TextAlign textAlign;
   final Color color;
+  final TextDecoration? textDecoration;
   const BoldText({
     super.key,
     this.fontsize = 20,
     required this.text,
     this.textAlign = TextAlign.center,
     this.color = AppColors.onSurface,
+    this.textDecoration,
   });
 
   @override
@@ -23,6 +25,7 @@ class BoldText extends StatelessWidget {
         fontWeight: FontWeight.bold,
         color: color,
         fontFamily: "Manjari",
+        decoration: textDecoration,
       ),
       textAlign: textAlign,
     );

@@ -31,32 +31,66 @@ class TaskTile extends StatelessWidget {
         borderradius: 4,
         marign: const EdgeInsets.symmetric(horizontal: 16),
         width: 390,
-        height: 72,
+        height: 90,
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
+              Column(
                 children: [
-                  TaskCheckbox(
-                    isCompleted: taskModel.isCompleted,
-                    onTap:
-                        () => context.read<TaskBloc>().add(
-                          ToggleTaskCompletion(
-                            taskModel.id,
-                            !taskModel.isCompleted,
+                  Row(
+                    children: [
+                      TaskCheckbox(
+                        isCompleted: taskModel.isCompleted,
+                        onTap:
+                            () => context.read<TaskBloc>().add(
+                              ToggleTaskCompletion(
+                                taskModel.id,
+                                !taskModel.isCompleted,
+                              ),
+                            ),
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Title
+                          RegularText(
+                            text: taskModel.title,
+                            color: AppColors.onSurface,
+                            textDecoration:
+                                taskModel.isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
                           ),
-                        ),
-                  ),
-                  SizedBox(width: 10),
-                  RegularText(
-                    text: taskModel.taskText,
-                    color: AppColors.onSurface,
-                    textDecoration:
-                        taskModel.isCompleted
-                            ? TextDecoration.lineThrough
-                            : TextDecoration.none,
+                          SizedBox(height: 1),
+                          // Description
+                          RegularText(
+                            text: taskModel.description,
+                            color: AppColors.onSurface.withOpacity(0.7),
+                            fontsize: 14,
+                            textDecoration:
+                                taskModel.isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                          ),
+                          SizedBox(height: 1),
+                          // Due Date
+                          RegularText(
+                            text:
+                                "Due: ${taskModel.dueDate.toDate().day}-${taskModel.dueDate.toDate().month}-${taskModel.dueDate.toDate().year}",
+                            color: Colors.redAccent,
+                            fontsize: 12,
+                            textDecoration:
+                                taskModel.isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none,
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -77,7 +111,6 @@ class TaskTile extends StatelessWidget {
                           builder: (context) {
                             return TaskBottomSheet(
                               taskModel: taskModel,
-                              taskcontroller: taskcontroller,
                               taskService: taskService,
                             );
                           },

@@ -1,86 +1,63 @@
 import 'dart:async';
-
 import 'package:borading_week2/services/logger_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/task.dart';
 
-// ignore: constant_identifier_names
 const String TODO_COLLECTION_REF = "todos";
 
-/// Service layer for handling Firestore CRUD operations on tasks.
-/// Keeps all Firebase logic separated from UI/Bloc.
 class TaskService {
-  /// Reference to the `tasks` collection in Firestore
   final CollectionReference<Map<String, dynamic>> _collection =
       FirebaseFirestore.instance.collection(TODO_COLLECTION_REF);
-  final log = LoggerService(); // Singleton instance
-  final StreamController<String> _serachcontroller =
+
+  final log = LoggerService();
+  final StreamController<String> _searchController =
       StreamController<String>.broadcast();
 
-  /// Add a new task
-  Future<void> addTask(String text) async {
+  /// ✅ Add a new task (with title, description, and dueDate)
+  Future<void> addTask(
+    String title,
+    String description,
+    DateTime dueDate,
+  ) async {
     final id = DateTime.now().millisecondsSinceEpoch.toString();
     final task = TaskModel(
       id: id,
-      taskText: text,
+      title: title,
+      description: description,
+      dueDate: Timestamp.fromDate(dueDate),
       createdAt: Timestamp.now(),
       isCompleted: false,
       updatedAt: Timestamp.now(),
     );
 
-    log.i("🔥 Adding Task: ${task.toJson()}"); // info
-
-    try {
-      await _collection.doc(id).set(task.toJson());
-      log.i("✅ Task added successfully");
-    } catch (e, stack) {
-      log.e("❌ Firestore add failed", e, stack);
-    }
+    await _collection.doc(id).set(task.toJson());
   }
 
-  // Current search term
   void setSearchTerm(String term) {
-    _serachcontroller.add(term);
+    _searchController.add(term);
   }
 
-  // Stream of filtered tasks
-  // Stream<List<TaskModel>> filteredTasksStream() {
-  //   return Rx.combineLatest2<List<TaskModel>, String, List<TaskModel>>(
-  //     tasksStream(), // all tasks from firestore
-  //     _serachcontroller.stream.startWith(''),
-  //     (tasks, search) {
-  //       if (search.isEmpty) return tasks;
-  //       return tasks
-  //           .where(
-  //             (task) => task.title.toLowerCase().contains(search.toLowerCase()),
-  //           )
-  //           .toList();
-  //     },
-  //   );
-  // }
-
-  /// Update the completion status of a task
+  /// ✅ Update the completion status
   Future<void> setCompleted(String docId, bool isCompleted) async {
     await _collection.doc(docId).update({"isCompleted": isCompleted});
   }
 
-  /// Delete a task by document ID
+  /// ✅ Delete a task
   Future<void> deleteTask(String docId) async {
     await _collection.doc(docId).delete();
   }
 
-  // **New function: first fetch pending tasks count**
+  /// ✅ Fetch pending count
   Future<int> getPendingCount() async {
     final snapshot =
         await _collection.where('isCompleted', isEqualTo: false).get();
     return snapshot.docs.length;
   }
 
-  // ignore: unintended_html_in_doc_comment
-  /// Stream of only pending tasks List<TaskModel>
+  /// ✅ Stream of pending tasks
   Stream<List<TaskModel>> pendingTasksStream() {
     return _collection
-        .where('isCompleted', isEqualTo: false) // pending tasks mathram
+        .where('isCompleted', isEqualTo: false)
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
@@ -89,21 +66,26 @@ class TaskService {
         );
   }
 
-  /// Stream of pending tasks count
   Stream<int> pendingTasksCountStream() {
     return pendingTasksStream().map((list) => list.length);
   }
 
-  /// Update the text of a task
+  /// ✅ Update a task’s data
   Future<void> updateTask(
-    String docId,
-    String taskText,
-    bool iscompelde,
+    String id,
+    String title,
+    String description,
+    Timestamp dueDate,
   ) async {
-    await _collection.doc(docId).update({"taskText": taskText});
+    await _collection.doc(id).update({
+      "title": title,
+      "description": description,
+      "dueDate": dueDate,
+      "updatedAt": Timestamp.now(),
+    });
   }
 
-  /// Listen to a realtime stream of tasks (ordered by createdAt desc)
+  /// ✅ Stream of all tasks
   Stream<List<TaskModel>> tasksStream() {
     return _collection
         .orderBy('createdAt', descending: true)
@@ -114,7 +96,7 @@ class TaskService {
         );
   }
 
-  /// Fetch tasks once (without realtime updates)
+  /// ✅ Fetch once (no realtime)
   Future<List<TaskModel>> fetchTasksOnce() async {
     final snapshot =
         await _collection.orderBy('createdAt', descending: true).get();

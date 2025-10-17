@@ -8,21 +8,39 @@ abstract class TaskEvent extends Equatable {
 class LoadTask extends TaskEvent {}
 
 class AddTask extends TaskEvent {
-  final String text;
-  AddTask(this.text);
+  final String title;
+  final String description;
+  final DateTime dueDate;
+
+  AddTask(this.title, this.description, this.dueDate);
+
   @override
-  List<Object?> get props => [text];
+  List<Object?> get props => [title, description, dueDate];
 }
 
 class UpdateTask extends TaskEvent {
   final String id;
-  final String newText; // <-- add this
+  final String newTitle;
+  final String newDescription;
+  final DateTime newDueDate;
   final bool isCompleted;
 
-  UpdateTask(this.id, this.newText, this.isCompleted);
+  UpdateTask(
+    this.id,
+    this.newTitle,
+    this.newDescription,
+    this.newDueDate,
+    this.isCompleted,
+  );
 
   @override
-  List<Object?> get props => [id, newText, isCompleted];
+  List<Object?> get props => [
+    id,
+    newTitle,
+    newDescription,
+    newDueDate,
+    isCompleted,
+  ];
 }
 
 class SearchTasks extends TaskEvent {
